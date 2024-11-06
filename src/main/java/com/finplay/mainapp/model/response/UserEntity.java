@@ -1,19 +1,15 @@
 package com.finplay.mainapp.model.response;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
+
+/*@Data
 @Entity
 @Builder
 @Table(name="categories")
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor*/
 public class UserEntity {
-    @Id
+    /*@Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
     private Long id;
@@ -21,7 +17,7 @@ public class UserEntity {
     private String username;
     private String email;
     private String phoneNumber;
-    private String role;
+    private String role;*/
 
 
 }
