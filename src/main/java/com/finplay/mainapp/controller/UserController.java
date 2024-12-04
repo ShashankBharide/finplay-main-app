@@ -3,6 +3,7 @@ package com.finplay.mainapp.controller;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
 import com.amazonaws.services.cognitoidp.model.*;
 import com.finplay.mainapp.entity.User;
+import com.finplay.mainapp.service.StockService;
 import com.finplay.mainapp.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/finplay/api/users")
@@ -39,6 +41,7 @@ public class UserController {
 
     @Value("${aws.cognito.region}")
     private String region;
+
 
 
     private final AWSCognitoIdentityProvider cognitoIdentityProvider;
@@ -110,8 +113,16 @@ public class UserController {
             String accessToken = authResult.getAuthenticationResult().getAccessToken();
             String idToken = authResult.getAuthenticationResult().getIdToken();
 
-            AuthResponse response = new AuthResponse(accessToken, idToken);
-            return ResponseEntity.ok(response);
+            User userOptional = userService.getUserByEmail(loginRequest.getEmail());
+            if (userOptional!=null) {
+
+                Long userId = userOptional.getId();
+
+                AuthResponse response = new AuthResponse(accessToken, idToken, userId);
+                return ResponseEntity.ok(response);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
 
         } catch (AWSCognitoIdentityProviderException e) {
             // Handle specific Cognito exceptions here
@@ -153,6 +164,7 @@ public class UserController {
     public static class AuthResponse {
         private String accessToken;
         private String idToken;
+        private long id;
     }
 
     public static String calculateSecretHash(String userName, String clientId, String clientSecret) throws Exception {
