@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
         // Create default wallet for the user
         Wallet wallet = new Wallet();
         wallet.setUser(savedUser);
-        wallet.setBalance(0.0);
+        wallet.setBalance(1000.0);
         walletRepository.save(wallet);
 
         return savedUser;
