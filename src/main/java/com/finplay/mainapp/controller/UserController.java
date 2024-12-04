@@ -48,13 +48,13 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    @Operation(summary = "Register User", description = "please send the user request to register the user and accept the token")
+    @Operation(summary = "Register User", description = "Please send the user request to register the user and accept the token")
     public ResponseEntity<String> register(@RequestBody UserRequest request) {
         try {
             // Create the user with a temporary password
             AdminCreateUserRequest userRequest = new AdminCreateUserRequest()
                     .withUserPoolId(userPoolId)
-                    .withUsername(request.getEmail()) // Corrected to use the provided username
+                    .withUsername(request.getEmail())
                     .withUserAttributes(
                             new AttributeType().withName("email").withValue(request.getEmail())
                     )
@@ -64,7 +64,7 @@ public class UserController {
 
             AdminSetUserPasswordRequest setPasswordRequest = new AdminSetUserPasswordRequest()
                     .withUserPoolId(userPoolId)
-                    .withUsername(request.getEmail()) // Corrected to use the provided username
+                    .withUsername(request.getEmail())
                     .withPassword(request.getPassword())
                     .withPermanent(true);
 

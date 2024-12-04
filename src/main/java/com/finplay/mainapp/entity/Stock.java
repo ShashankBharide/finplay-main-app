@@ -17,7 +17,7 @@ public class Stock {
     @Column(name = "stock_id")
     private Long stockId;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String symbol;
 
     private String name;

@@ -1,5 +1,10 @@
 package com.finplay.mainapp.config;
 
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
+import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProviderClientBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -20,6 +25,9 @@ import java.util.Collections;
 @Configuration
 public class SecurityConfig {
 
+
+
+
     private static final String[] PUBLIC_URLS = {
             "/finplay/api/users/register",
             "/finplay/api/users/login",
@@ -28,6 +36,8 @@ public class SecurityConfig {
             "/swagger-resources/**",
             "/webjars/**"
     };
+
+
 
     @Bean
     public SecurityFilterChain publicSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -71,7 +81,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtDecoder jwtDecoder() {
-        String jwkSetUri = "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_qIoijIZjb/.well-known/jwks.json";
+        String jwkSetUri = "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_fGHsAhy5C/.well-known/jwks.json";
         return NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
     }
 
