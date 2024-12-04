@@ -29,4 +29,9 @@ public class StockServiceImpl implements StockService {
         return stockRepository.findBySymbol(symbol)
                 .orElseThrow(() -> new RuntimeException("Stock not found with symbol: " + symbol));
     }
+
+    @Override
+    public List<Stock> getStockDetailLatest(String symbol) {
+        return stockRepository.findLatestByNameOrSymbol(symbol);
+    }
 }

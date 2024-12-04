@@ -35,4 +35,10 @@ public class StockController {
         Stock stock = stockService.getStockDetail(symbol);
         return ResponseEntity.ok(stock);
     }
+    // Search API - Search by Name, Symbol, Price, or Profit
+    @GetMapping("/search-latest")
+    public ResponseEntity<List<Stock>> searchStocksLatest(@RequestParam String keyword) {
+        List<Stock> stocks = stockService.getStockDetailLatest(keyword);
+        return ResponseEntity.ok(stocks);
+    }
 }

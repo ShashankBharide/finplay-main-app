@@ -11,5 +11,6 @@ public interface StockService {
     List<Stock> searchStocks(String keyword);
     List<Stock> getStockList();
     Stock getStockDetail(String symbol);
+    List<Stock> getStockDetailLatest(String symbol);
 
 }
