@@ -6,9 +6,9 @@ spring:
     name: FINPLAY-MAIN-APP
 
   datasource:
-    url: jdbc:mysql://localhost:3306/finplay
-    username: root
-    password: 12345678
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -21,13 +21,13 @@ spring:
     locations: classpath:db/migration
 aws:
   iam:
-    access-key-id: AKIAQ4NSA4IV6YR7IWHL
-    secret-access-key: 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
+    access-key-id: ${AWS_ACCESS_KEY_ID}
+    secret-access-key: ${AWS_SECRET_ACCESS_KEY}
   cognito:
-    clientId: 71udj067l7cinrjsc2rn76gk4s
-    clientSecret: 1ci4d90jnibldi9ldo95etodu1veuftsab09kslegcjkrpritfb5
-    userPoolId: us-east-1_fGHsAhy5C
-    region: us-east-1
+    clientId: ${COGNITO_CLIENT_ID}
+    clientSecret: ${COGNITO_CLIENT_SECRET}
+    userPoolId: ${COGNITO_USER_POOL_ID}
+    region: ${AWS_REGION}
 management:
   endpoints:
     web:

@@ -1,12 +1,14 @@
 package com.finplay.mainapp.impl;
 
 
+import com.finplay.mainapp.entity.DTO.PortfolioDTO;
 import com.finplay.mainapp.entity.Portfolio;
 import com.finplay.mainapp.entity.PortfolioStock;
 import com.finplay.mainapp.entity.User;
 import com.finplay.mainapp.repo.PortfolioRepository;
 import com.finplay.mainapp.repo.UserRepository;
 import com.finplay.mainapp.service.PortfolioService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,9 +25,13 @@ public class PortfolioServiceImpl implements PortfolioService {
     private UserRepository userRepository;
 
     @Override
-    public Portfolio getPortfolio(Long userId) {
-        return portfolioRepository.findByUserId(userId)
+    public PortfolioDTO getPortfolio(Long userId) {
+        Portfolio portfolio = portfolioRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Portfolio not found for userId: " + userId));
+
+        PortfolioDTO dto = new PortfolioDTO();
+        BeanUtils.copyProperties(portfolio, dto);
+        return dto;
     }
 
     @Override

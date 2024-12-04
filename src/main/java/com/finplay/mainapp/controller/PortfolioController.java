@@ -1,5 +1,6 @@
 package com.finplay.mainapp.controller;
 
+import com.finplay.mainapp.entity.DTO.PortfolioDTO;
 import com.finplay.mainapp.entity.Portfolio;
 import com.finplay.mainapp.service.PortfolioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,8 @@ public class PortfolioController {
 
     // Get Portfolio Details
     @GetMapping("/{userId}")
-    public ResponseEntity<Portfolio> getPortfolio(@PathVariable Long userId) {
-        Portfolio portfolio = portfolioService.getPortfolio(userId);
+    public ResponseEntity<PortfolioDTO> getPortfolio(@PathVariable Long userId) {
+        PortfolioDTO portfolio = portfolioService.getPortfolio(userId);
         return ResponseEntity.ok(portfolio);
     }
 
