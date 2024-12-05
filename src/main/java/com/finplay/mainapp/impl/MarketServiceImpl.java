@@ -40,9 +40,14 @@ public class MarketServiceImpl implements MarketService {
     }
 
     @Override
+    public Stock getStockDetailTop(String symbol) {
+        return stockRepository.findTopByNameOrSymbolOrderByValueDesc(symbol);
+    }
+
+    @Override
     public Trade buyStock(Long userId, String stockSymbol, int quantity, double price) {
         // Fetch stock details
-        Stock stock = getStockDetail(stockSymbol);
+        Stock stock = getStockDetailTop(stockSymbol);
 
         // Calculate total amount
         double totalAmount = quantity * price;

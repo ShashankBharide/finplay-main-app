@@ -10,4 +10,5 @@ public interface MarketService {
     List<Stock> getStockList();
     Stock getStockDetail(String symbol);
     Trade buyStock(Long userId, String stockSymbol, int quantity, double price);
+    public Stock getStockDetailTop(String symbol);
 }
