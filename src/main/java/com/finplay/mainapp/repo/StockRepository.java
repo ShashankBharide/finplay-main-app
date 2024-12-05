@@ -19,11 +19,7 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
             "AND s.date = (SELECT MAX(sub.date) FROM Stock sub WHERE sub.symbol = s.symbol)")
     List<Stock> findLatestByNameOrSymbol(@Param("keyword") String keyword);
 
-    @Query("SELECT s FROM Stock s WHERE " +
-            "(LOWER(s.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "OR LOWER(s.symbol) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
-            "AND s.date = (SELECT MAX(sub.date) FROM Stock sub WHERE sub.symbol = s.symbol) " +
-            "ORDER BY s.value DESC")
-    Stock findTopByNameOrSymbolOrderByValueDesc(@Param("keyword") String keyword);
+    @Query("SELECT s FROM Stock s WHERE s.symbol = :symbol ORDER BY s.date DESC LIMIT 1")
+    Optional<Stock> findLatestStockBySymbol(@Param("symbol") String symbol);
 
 }

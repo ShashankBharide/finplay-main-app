@@ -39,15 +39,13 @@ public class MarketServiceImpl implements MarketService {
                 .orElseThrow(() -> new RuntimeException("Stock not found with symbol: " + symbol));
     }
 
-    @Override
-    public Stock getStockDetailTop(String symbol) {
-        return stockRepository.findTopByNameOrSymbolOrderByValueDesc(symbol);
-    }
+
 
     @Override
     public Trade buyStock(Long userId, String stockSymbol, int quantity, double price) {
         // Fetch stock details
-        Stock stock = getStockDetailTop(stockSymbol);
+        Stock stock = stockRepository.findLatestStockBySymbol(stockSymbol)
+                .orElseThrow(() -> new RuntimeException("Stock not found for symbol: " + stockSymbol));
 
         // Calculate total amount
         double totalAmount = quantity * price;
