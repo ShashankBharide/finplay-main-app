@@ -38,6 +38,9 @@ public class SecurityConfig {
     };
 
 
+    @Value("${aws.cognito.jwtUri}")
+    private String jwt;
+
 
     @Bean
     public SecurityFilterChain publicSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -81,8 +84,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtDecoder jwtDecoder() {
-        String jwkSetUri = "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_fGHsAhy5C/.well-known/jwks.json";
-        return NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
+        return NimbusJwtDecoder.withJwkSetUri(jwt).build();
     }
 
     private JwtAuthenticationConverter jwtAuthenticationConverter() {

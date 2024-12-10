@@ -1,5 +1,7 @@
 server:
   port: 8001
+  servlet:
+    context-path: /api/spring
 
 spring:
   application:
@@ -28,11 +30,13 @@ aws:
     clientSecret: ${COGNITO_CLIENT_SECRET}
     userPoolId: ${COGNITO_USER_POOL_ID}
     region: ${AWS_REGION}
+    jwtUri: ${JWT_URI}
 management:
   endpoints:
     web:
       exposure:
         include: health
+      base-path: /
   endpoint:
     health:
       show-details: always
