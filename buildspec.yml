@@ -59,7 +59,7 @@ phases:
       - docker build -t $ECR_REPOSITORY:latest .
       - docker tag $ECR_REPOSITORY:latest $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
-  post-build:
+  post_build:
     commands:
       - echo Build completed
       
