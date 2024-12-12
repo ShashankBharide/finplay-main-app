@@ -14,6 +14,13 @@ env:
     COGNITO_USER_POOL_ID: "us-east-1_e4yKbIDkl"
     AWS_REGION: "us-east-1"
     JWT_URI: "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_e4yKbIDkl/.well-known/jwks.json"
+  secrets-manager:
+    # Secure way to manage sensitive credentials
+    DB_PASSWORD: "finplay-secrets-M9rANM:database-password"
+    AWS_ACCESS_KEY_ID: "finplay-secrets-M9rANM:aws-access-key"
+    AWS_SECRET_ACCESS_KEY: "finplay-secrets-M9rANM:aws-secret-key"
+    COGNITO_CLIENT_ID: "finplay-secrets-M9rANM:client-id"
+    COGNITO_CLIENT_SECRET: "finplay-secrets-M9rANM:client-secret"
 phases:
   install:
     runtime-versions:
