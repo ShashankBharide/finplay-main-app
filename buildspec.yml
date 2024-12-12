@@ -58,7 +58,7 @@ phases:
       - echo Pushing image to ECR...
       - docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
       - echo "Writing image definitions file..."
-      - printf '{"containerDefinitions":[{"name":"finplay-main-app","imageUri":"%s"}]}' $ECR_REPOSITORY:latest > imageDefinitions.json
+      - printf '{"containerDefinitions":[{"name":"finplay-main-app","imageUri":"%s"}]}' $ECR_REGISTRY/$ECR_REPOSITORY:latest > imageDefinitions.json
       - echo "Post-build phase completed"
       
 artifacts:
