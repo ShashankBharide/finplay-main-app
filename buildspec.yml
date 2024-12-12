@@ -60,9 +60,7 @@ phases:
       - echo "Writing image definitions file..."
       - |
         cat << EOF > imageDefinitions.json
-        {  
-          "family": "finplay-backend",
-          "containerDefinitions": [
+          [
             {
               "name": "finplay-spring-container",
               "imageUri": "$ECR_REGISTRY/$ECR_REPOSITORY:latest"
@@ -72,7 +70,6 @@ phases:
               "imageUri": "$ECR_REGISTRY/$ECR_FLASK_REPOSITORY:latest"
             }
           ]
-        }
         EOF
       - cat imageDefinitions.json
       - echo "Post-build phase completed"
