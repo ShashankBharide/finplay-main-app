@@ -1,0 +1,91 @@
+version: 0.2
+
+env:
+  variables:
+    # ECS Configuration
+    ECS_CLUSTER: "finplay-cluster"
+    ECS_SERVICE: "finplay-backend-service"
+    ECS_TASK_DEFINITION: "finplay-backend"
+    
+    # ECR Configuration
+    ECR_REGISTRY: "061039764011.dkr.ecr.us-east-1.amazonaws.com"
+    ECR_REPOSITORY: "finplay-main-app"
+    
+    # Application Database Configuration
+    DB_URL: "jdbc:mysql://finplaydb-instance-1.c7a0imowi95o.us-east-1.rds.amazonaws.com:3306/finplaydb"
+    DB_USERNAME: "finplay"
+	COGNITO_USER_POOL_ID: "us-east-1_e4yKbIDkl"
+    AWS_REGION: "us-east-1"
+	JWT_URI: "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_e4yKbIDkl/.well-known/jwks.json"
+    
+  secrets-manager:
+    # Secure way to manage sensitive credentials
+    DB_PASSWORD: "arn:aws:secretsmanager:region:account-id:secret:database-password"
+    AWS_ACCESS_KEY_ID: "arn:aws:secretsmanager:region:account-id:secret:aws-access-key"
+    AWS_SECRET_ACCESS_KEY: "arn:aws:secretsmanager:region:account-id:secret:aws-secret-key"
+    COGNITO_CLIENT_ID: "arn:aws:secretsmanager:region:account-id:secret:client-id"
+    COGNITO_CLIENT_SECRET: "arn:aws:secretsmanager:region:account-id:secret:client-secret"
+    
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto17
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
+
+  pre_build:
+    commands:
+      - echo Preparing for build
+      - mvn clean validate
+      
+  build:
+    commands:
+      - echo Building the application
+      - mvn package -DskipTests 
+        -DDB_URL=$DB_URL 
+        -DDB_USERNAME=$DB_USERNAME 
+        -DDB_PASSWORD=$DB_PASSWORD
+        -DAWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+        -DAWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+        -DAWS_REGION=$AWS_REGION
+        -DCOGNITO_CLIENT_ID=$COGNITO_CLIENT_ID
+        -DCOGNITO_CLIENT_SECRET=$COGNITO_CLIENT_SECRET
+        -DCOGNITO_USER_POOL_ID=$COGNITO_USER_POOL_ID
+		-DJWT_URI=$JWT_URI
+      
+      - echo Building the Docker image
+      - docker build -t $ECR_REPOSITORY:latest .
+      - docker tag $ECR_REPOSITORY:latest $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+  post-build:
+    commands:
+      - echo Build completed
+      
+      # Push image to ECR
+      - echo Pushing image to ECR...
+      - docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+      
+      # Update ECS task definition
+      - echo Retrieving current task definition
+      - TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition $ECS_TASK_DEFINITION --region $AWS_REGION)
+      
+      - echo Updating task definition image
+      - NEW_TASK_DEFINITION=$(echo $TASK_DEFINITION | jq --arg IMAGE "$ECR_REGISTRY/$ECR_REPOSITORY:latest" '.taskDefinition.containerDefinitions[0].image = $IMAGE')
+      
+      - echo Registering new task definition
+      - NEW_TASK_DEF_REVISION=$(echo $NEW_TASK_DEFINITION | aws ecs register-task-definition --cli-input-json - --region $AWS_REGION | jq '.taskDefinition.revision')
+      
+      - echo Updating ECS service
+      - aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_SERVICE --task-definition $ECS_TASK_DEFINITION:$NEW_TASK_DEF_REVISION --region $AWS_REGION
+      
+artifacts:
+  files:
+    - target/main-app-0.0.1-SNAPSHOT.jar
+    - Dockerfile
+  discard-paths: yes
+
+cache:
+  paths:
+    - '/root/.m2/**/*'
