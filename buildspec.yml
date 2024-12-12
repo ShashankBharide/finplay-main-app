@@ -62,7 +62,7 @@ phases:
         printf '{
           "containerDefinitions": [{
             "name": "finplay-main-app",
-            "imageUri": "%s",
+            "image": "%s",
             "environment": [
               {"name": "DB_URL", "value": "%s"},
               {"name": "DB_USERNAME", "value": "%s"},
