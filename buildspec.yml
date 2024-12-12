@@ -14,13 +14,7 @@ env:
     COGNITO_USER_POOL_ID: "us-east-1_e4yKbIDkl"
     AWS_REGION: "us-east-1"
     JWT_URI: "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_e4yKbIDkl/.well-known/jwks.json"
-  secrets-manager:
-    # Secure way to manage sensitive credentials
-    DB_PASSWORD: "arn:aws:secretsmanager:us-east-1:061039764011:secret:finplay-secrets-M9rANM:database-password"
-    AWS_ACCESS_KEY_ID: "arn:aws:secretsmanager:us-east-1:061039764011:secret:finplay-secrets-M9rANM:aws-access-key"
-    AWS_SECRET_ACCESS_KEY: "arn:aws:secretsmanager:us-east-1:061039764011:secret:finplay-secrets-M9rANM:aws-secret-key"
-    COGNITO_CLIENT_ID: "arn:aws:secretsmanager:us-east-1:061039764011:secret:finplay-secrets-M9rANM:client-id"
-    COGNITO_CLIENT_SECRET: "arn:aws:secretsmanager:us-east-1:061039764011:secret:finplay-secrets-M9rANM:client-secret"
+
 phases:
   install:
     runtime-versions:
@@ -57,36 +51,10 @@ phases:
       # Push image to ECR
       - echo Pushing image to ECR...
       - docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-      # Create new task definition
-      - echo Creating new task definition...
-      - |
-        TASK_DEFINITION=$(aws ecs describe-task-definition \
-          --task-definition "$ECS_TASK_DEFINITION" \
-          --region "$AWS_REGION")
-        NEW_TASK_DEFINITION=$(echo "$TASK_DEFINITION" | jq '.taskDefinition' | jq '.containerDefinitions[0].image="'$ECR_REGISTRY'/'$ECR_REPOSITORY':latest"')
-        # Remove fields that shouldn't be included
-        NEW_TASK_DEFINITION=$(echo "$NEW_TASK_DEFINITION" | jq 'del(.taskDefinitionArn,.revision,.status,.requiresAttributes,.compatibilities,.registeredAt,.registeredBy)')
-        # Register new task definition and capture ARN
-        NEW_TASK_DEFINITION_ARN=$(aws ecs register-task-definition \
-          --family "$ECS_TASK_DEFINITION" \
-          --cli-input-json "$(echo "$NEW_TASK_DEFINITION")" \
-          --region "$AWS_REGION" \
-          --query 'taskDefinition.taskDefinitionArn' \
-          --output text)
-      # Update ECS service
-      - echo Updating ECS service...
-      - |
-        aws ecs update-service \
-          --cluster "$ECS_CLUSTER" \
-          --service "$ECS_SERVICE" \
-          --task-definition "$NEW_TASK_DEFINITION_ARN" \
-          --region "$AWS_REGION" \
-          --force-new-deployment
+      - echo "Writing image definitions file..."
+      - printf '{"ImageURI":"%s"}' $ECR_REGISTRY/$ECR_REPOSITORY:latest > imageDefinitions.json
+      - echo "Post-build phase completed"
+      
 artifacts:
   files:
-    - target/main-app-0.0.1-SNAPSHOT.jar
-    - Dockerfile
-  discard-paths: yes
-cache:
-  paths:
-    - '/root/.m2/**/*'
+    - imageDefinitions.json
