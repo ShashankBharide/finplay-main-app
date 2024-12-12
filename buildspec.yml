@@ -58,7 +58,38 @@ phases:
       - echo Pushing image to ECR...
       - docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
       - echo "Writing image definitions file..."
-      - printf '{"containerDefinitions":[{"name":"finplay-main-app","imageUri":"%s"}]}' $ECR_REGISTRY/$ECR_REPOSITORY:latest > imageDefinitions.json
+      - |
+        printf '{
+          "containerDefinitions": [{
+            "name": "finplay-main-app",
+            "imageUri": "%s",
+            "environment": [
+              {"name": "DB_URL", "value": "%s"},
+              {"name": "DB_USERNAME", "value": "%s"},
+              {"name": "COGNITO_USER_POOL_ID", "value": "%s"},
+              {"name": "AWS_REGION", "value": "%s"},
+              {"name": "JWT_URI", "value": "%s"}
+            ],
+            "secrets": [
+              {"name": "DB_PASSWORD", "valueFrom": "%s"},
+              {"name": "AWS_ACCESS_KEY_ID", "valueFrom": "%s"},
+              {"name": "AWS_SECRET_ACCESS_KEY", "valueFrom": "%s"},
+              {"name": "COGNITO_CLIENT_ID", "valueFrom": "%s"},
+              {"name": "COGNITO_CLIENT_SECRET", "valueFrom": "%s"}
+            ]
+          }]
+        }' \
+        "$ECR_REGISTRY/$ECR_REPOSITORY:latest" \
+        "$DB_URL" \
+        "$DB_USERNAME" \
+        "$COGNITO_USER_POOL_ID" \
+        "$AWS_REGION" \
+        "$JWT_URI" \
+        "$DB_PASSWORD" \
+        "$AWS_ACCESS_KEY_ID" \
+        "$AWS_SECRET_ACCESS_KEY" \
+        "$COGNITO_CLIENT_ID" \
+        "$COGNITO_CLIENT_SECRET" > imageDefinitions.json
       - echo "Post-build phase completed"
       
 artifacts:
