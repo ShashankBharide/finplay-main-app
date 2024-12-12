@@ -1,5 +1,5 @@
 # Use a Maven image for building the application
-FROM amazoncorretto:17 as builder
+FROM public.ecr.aws/amazoncorretto/amazoncorretto:17
 
 # Set the working directory
 WORKDIR /app
