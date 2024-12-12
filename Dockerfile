@@ -1,5 +1,5 @@
 # Use a Maven image for building the application
-FROM public.ecr.aws/amazoncorretto/amazoncorretto:17 AS builder
+FROM amazoncorretto:17-alpine
  
 # Set the working directory
 WORKDIR /app
@@ -10,9 +10,6 @@ COPY src ./src
  
 # Package the application using Maven
 RUN yum install -y maven && mvn clean package -DskipTests
- 
-# Use the same base image for runtime to avoid pull issues
-FROM public.ecr.aws/amazoncorretto/amazoncorretto:17-alpine
  
 # Set the working directory
 WORKDIR /app
