@@ -68,14 +68,12 @@ phases:
               {"name": "DB_USERNAME", "value": "%s"},
               {"name": "COGNITO_USER_POOL_ID", "value": "%s"},
               {"name": "AWS_REGION", "value": "%s"},
-              {"name": "JWT_URI", "value": "%s"}
-            ],
-            "secrets": [
-              {"name": "DB_PASSWORD", "value": "%s"},
-              {"name": "AWS_ACCESS_KEY_ID", "value": "%s"},
-              {"name": "AWS_SECRET_ACCESS_KEY", "value": "%s"},
-              {"name": "COGNITO_CLIENT_ID", "value": "%s"},
-              {"name": "COGNITO_CLIENT_SECRET", "value": "%s"}
+              {"name": "JWT_URI", "value": "%s"},
+              {"name": "DB_PASSWORD", "valueFrom": "%s"},
+              {"name": "AWS_ACCESS_KEY_ID", "valueFrom": "%s"},
+              {"name": "AWS_SECRET_ACCESS_KEY", "valueFrom": "%s"},
+              {"name": "COGNITO_CLIENT_ID", "valueFrom": "%s"},
+              {"name": "COGNITO_CLIENT_SECRET", "valueFrom": "%s"}
             ]
           }]
         }' \
