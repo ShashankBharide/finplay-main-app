@@ -8,6 +8,7 @@ env:
     # ECR Configuration
     ECR_REGISTRY: "061039764011.dkr.ecr.us-east-1.amazonaws.com"
     ECR_REPOSITORY: "finplay-main-app"
+    ECR_FLASK_REPOSITORY: "finplay-data-ingest"
     # Application Database Configuration
     DB_URL: "jdbc:mysql://finplaydb-instance-1.c7a0imowi95o.us-east-1.rds.amazonaws.com:3306/finplaydb"
     DB_USERNAME: "finplay"
@@ -54,13 +55,26 @@ phases:
   post_build:
     commands:
       - echo Build completed
-      # Push image to ECR
       - echo Pushing image to ECR...
       - docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
       - echo "Writing image definitions file..."
-      - printf '{"containerDefinitions":[{"name":"finplay-spring-container","imageUri":"%s"}]}' $ECR_REPOSITORY:latest > imageDefinitions.json
+      - |
+        cat << EOF > imageDefinitions.json
+        {
+          "containerDefinitions": [
+            {
+              "name": "finplay-spring-container",
+              "imageUri": "$ECR_REGISTRY/$ECR_REPOSITORY:latest"
+            },
+            {
+              "name": "finplay-flask-container",
+              "imageUri": "$ECR_REGISTRY/$ECR_FLASK_REPOSITORY:latest"
+            }
+          ]
+        }
+        EOF
+      - cat imageDefinitions.json
       - echo "Post-build phase completed"
-      
 artifacts:
   files:
     - imageDefinitions.json
