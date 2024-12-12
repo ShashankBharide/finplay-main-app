@@ -53,7 +53,7 @@ phases:
         -DCOGNITO_CLIENT_ID=$COGNITO_CLIENT_ID
         -DCOGNITO_CLIENT_SECRET=$COGNITO_CLIENT_SECRET
         -DCOGNITO_USER_POOL_ID=$COGNITO_USER_POOL_ID
-		-DJWT_URI=$JWT_URI
+        -DJWT_URI=$JWT_URI
       
       - echo Building the Docker image
       - docker build -t $ECR_REPOSITORY:latest .
