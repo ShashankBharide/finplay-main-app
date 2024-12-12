@@ -1,5 +1,5 @@
-# Use a Maven image with JDK 17 to build and run the application
-FROM maven:3.9.4-eclipse-temurin-17
+# Use a Maven image for building the application
+FROM amazoncorretto:17 as builder
 
 # Set the working directory
 WORKDIR /app
@@ -9,10 +9,19 @@ COPY pom.xml ./
 COPY src ./src
 
 # Package the application using Maven
-RUN mvn clean package -DskipTests
+RUN yum install -y maven && mvn clean package -DskipTests
+
+# Use a lightweight Amazon Corretto runtime for the final image
+FROM amazoncorretto:17-alpine
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the packaged application from the build stage
+COPY --from=builder /app/target/main-app-0.0.1-SNAPSHOT.jar ./main-app.jar
 
 # Expose the application port
 EXPOSE 8001
 
 # Run the application
-ENTRYPOINT ["java", "-jar", "target/main-app-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "main-app.jar"]
