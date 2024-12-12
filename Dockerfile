@@ -12,7 +12,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
  
 # Use a lightweight JDK image for the runtime stage
-FROM amazoncorretto:17-alpine
+FROM 061039764011.dkr.ecr.us-east-1.amazonaws.com/maven-base
  
 # Set the working directory
 WORKDIR /app
