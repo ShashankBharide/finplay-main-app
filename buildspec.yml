@@ -60,7 +60,8 @@ phases:
       - echo "Writing image definitions file..."
       - |
         cat << EOF > imageDefinitions.json
-        {
+        {  
+          "family": "finplay-backend",
           "containerDefinitions": [
             {
               "name": "finplay-spring-container",
